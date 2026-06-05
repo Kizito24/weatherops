@@ -1,5 +1,6 @@
 """Authentication business logic service."""
 
+import asyncio
 import uuid
 import logging
 import hashlib
@@ -22,6 +23,16 @@ from app.core.security.jwt import (
 from app.core.config import get_settings
 
 logger = logging.getLogger(__name__)
+
+# Lock to prevent concurrent refresh token operations for the same user
+_refresh_locks: dict[uuid.UUID, asyncio.Lock] = {}
+
+
+def _get_refresh_lock(user_id: uuid.UUID) -> asyncio.Lock:
+    """Get or create a lock for a user's refresh token operations."""
+    if user_id not in _refresh_locks:
+        _refresh_locks[user_id] = asyncio.Lock()
+    return _refresh_locks[user_id]
 
 
 class AuthenticationError(Exception):
@@ -159,28 +170,31 @@ class AuthService:
             user_id_str = extract_user_id(payload)
             user_id = uuid.UUID(user_id_str)
 
-            # Check if token is stored and valid in database
-            token_hash = self._hash_token(refresh_token)
-            stored_token = await self.token_repo.get_refresh_token_by_hash(token_hash)
+            # Use a lock to prevent concurrent refresh operations for the same user
+            lock = _get_refresh_lock(user_id)
+            async with lock:
+                # Check if token is stored and valid in database
+                token_hash = self._hash_token(refresh_token)
+                stored_token = await self.token_repo.get_refresh_token_by_hash(token_hash)
 
-            if not stored_token or not stored_token.is_valid():
-                logger.warning(f"Invalid refresh token used for user: {user_id}")
-                raise AuthenticationError("Refresh token is invalid or revoked")
+                if not stored_token or not stored_token.is_valid():
+                    logger.warning(f"Invalid refresh token used for user: {user_id}")
+                    raise AuthenticationError("Refresh token is invalid or revoked")
 
-            # Verify user exists and is active
-            user = await self.user_repo.get_active_user_by_id(user_id)
-            if not user:
-                logger.warning(f"Refresh attempt for non-existent/inactive user: {user_id}")
-                raise AuthenticationError("User not found or inactive")
+                # Verify user exists and is active
+                user = await self.user_repo.get_active_user_by_id(user_id)
+                if not user:
+                    logger.warning(f"Refresh attempt for non-existent/inactive user: {user_id}")
+                    raise AuthenticationError("User not found or inactive")
 
-            # Revoke old refresh token
-            await self.token_repo.revoke_refresh_token(stored_token.id)
+                # Revoke old refresh token
+                await self.token_repo.revoke_refresh_token(stored_token.id)
 
-            # Create new tokens
-            new_access_token, new_refresh_token = await self.create_tokens(user_id)
+                # Create new tokens
+                new_access_token, new_refresh_token = await self.create_tokens(user_id)
 
-            logger.info(f"Access token refreshed for user: {user_id}")
-            return new_access_token, new_refresh_token
+                logger.info(f"Access token refreshed for user: {user_id}")
+                return new_access_token, new_refresh_token
 
         except TokenError as e:
             logger.warning(f"Token refresh failed: {e}")

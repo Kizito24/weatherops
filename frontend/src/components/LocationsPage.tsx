@@ -271,7 +271,7 @@ export default function LocationsPage({
                   placeholder="e.g. Lagos, Nigeria"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full text-sm px-4 py-2 bg-slate-50 dark:bg-slate-850 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-150 dark:border-slate-750 focus:border-indigo-650 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-hidden"
+                  className="w-full text-sm px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 focus:border-indigo-500 rounded-lg text-white focus:outline-hidden"
                 />
               </div>
 
@@ -290,7 +290,7 @@ export default function LocationsPage({
                     placeholder="e.g. 6.5244"
                     value={latitude}
                     onChange={(e) => setLatitude(e.target.value)}
-                    className="w-full text-sm px-4 py-2 bg-slate-50 dark:bg-slate-850 hover:bg-slate-100 border border-slate-150 focus:border-indigo-650 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-hidden"
+                    className="w-full text-sm px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 focus:border-indigo-500 rounded-lg text-white focus:outline-hidden"
                   />
                 </div>
 
@@ -308,7 +308,7 @@ export default function LocationsPage({
                     placeholder="e.g. 3.3792"
                     value={longitude}
                     onChange={(e) => setLongitude(e.target.value)}
-                    className="w-full text-sm px-4 py-2 bg-slate-50 dark:bg-slate-850 hover:bg-slate-100 border border-slate-150 focus:border-indigo-650 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-hidden"
+                    className="w-full text-sm px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 focus:border-indigo-500 rounded-lg text-white focus:outline-hidden"
                   />
                 </div>
               </div>
@@ -383,7 +383,7 @@ export default function LocationsPage({
                   placeholder="e.g. Lagos, Nigeria"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full text-sm px-4 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-150 focus:border-indigo-650 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-hidden"
+                  className="w-full text-sm px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 focus:border-indigo-500 rounded-lg text-white focus:outline-hidden"
                 />
               </div>
 
@@ -402,7 +402,7 @@ export default function LocationsPage({
                     placeholder="e.g. 6.5244"
                     value={latitude}
                     onChange={(e) => setLatitude(e.target.value)}
-                    className="w-full text-sm px-4 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-150 focus:border-indigo-655 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-hidden"
+                    className="w-full text-sm px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 focus:border-indigo-500 rounded-lg text-white focus:outline-hidden"
                   />
                 </div>
 
@@ -420,7 +420,7 @@ export default function LocationsPage({
                     placeholder="e.g. 3.3792"
                     value={longitude}
                     onChange={(e) => setLongitude(e.target.value)}
-                    className="w-full text-sm px-4 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-150 focus:border-indigo-655 rounded-lg text-slate-900 dark:text-slate-100 focus:outline-hidden"
+                    className="w-full text-sm px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 focus:border-indigo-500 rounded-lg text-white focus:outline-hidden"
                   />
                 </div>
               </div>

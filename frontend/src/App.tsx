@@ -21,9 +21,11 @@ import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import AuthPage from './components/AuthPage';
 import OverviewPage from './components/OverviewPage';
+import WeatherPage from './components/WeatherPage';
 import LocationsPage from './components/LocationsPage';
 import RulesPage from './components/RulesPage';
 import AlertsPage from './components/AlertsPage';
+import TreesPage from './components/TreesPage';
 import SettingsPage from './components/SettingsPage';
 import ExportModal from './components/ExportModal';
 
@@ -71,7 +73,7 @@ export default function App() {
   // 2. User & Session routing sync
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
-    const validPages = ['overview', 'locations', 'rules', 'alerts', 'settings'];
+    const validPages = ['overview', 'weather', 'locations', 'rules', 'alerts', 'trees', 'settings'];
 
     if (tokenManager.isAuthenticated()) {
       // User is authenticated, set default page
@@ -111,7 +113,7 @@ export default function App() {
         return;
       }
 
-      const validPages = ['overview', 'locations', 'rules', 'alerts', 'settings'];
+      const validPages = ['overview', 'weather', 'locations', 'rules', 'alerts', 'trees', 'settings'];
       if (validPages.includes(hash)) {
         setActivePage(hash);
       }
@@ -277,12 +279,12 @@ export default function App() {
     }
   };
 
-  const handleToggleRuleActive = async (id: string, active: boolean) => {
+  const handleToggleRuleActive = async (id: string) => {
     try {
       const targetRule = rules.find((r) => r.id === id);
       if (!targetRule) throw new Error('Rule not found');
 
-      const res = await rulesApi.toggleActive(id, !active);
+      const res = await rulesApi.toggleActive(id, !targetRule.isActive);
       const loc = locations.find((l) => l.id === targetRule.locationId);
       showToast(
         res.isActive ? 'Incident Trigger Armed' : 'Incident Trigger Paused',
@@ -402,6 +404,13 @@ export default function App() {
                   />
                 )}
 
+                {activePage === 'weather' && (
+                  <WeatherPage
+                    locations={locations}
+                    onNavigateToPage={navigateTo}
+                  />
+                )}
+
                 {activePage === 'locations' && (
                   <LocationsPage
                     locations={locations}
@@ -431,6 +440,10 @@ export default function App() {
                     onClearAllAlerts={handleClearAllAlerts}
                     isLoading={isLoading}
                   />
+                )}
+
+                {activePage === 'trees' && (
+                  <TreesPage />
                 )}
 
                 {activePage === 'settings' && (

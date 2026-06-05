@@ -9,7 +9,9 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
-  Dot
+  Dot,
+  Cloud,
+  Leaf,
 } from 'lucide-react';
 import { UserProfile } from '../types';
 
@@ -36,9 +38,11 @@ export default function Sidebar({
 }: SidebarProps) {
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'weather', label: 'Weather', icon: Cloud },
     { id: 'locations', label: 'Locations', icon: MapPin },
     { id: 'rules', label: 'Rules', icon: Sliders },
     { id: 'alerts', label: 'Alerts', icon: Bell, badge: alertCount },
+    { id: 'trees', label: 'Trees', icon: Leaf },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 

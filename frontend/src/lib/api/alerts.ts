@@ -30,7 +30,9 @@ const mapToAlert = (response: AlertResponse): Alert => ({
   threshold: response.threshold,
   operator: response.operator,
   severity: response.severity,
+  status: response.status,
   timestamp: response.created_at,
+  resolvedAt: response.resolved_at || undefined,
 });
 
 export const alertsApi = {

@@ -34,7 +34,7 @@ export const exportAlertsToCSV = (
     alert.status,
     alert.severity || 'medium',
     new Date(alert.timestamp).toISOString(),
-    alert.resolved_at ? new Date(alert.resolved_at).toISOString() : 'N/A'
+    alert.resolvedAt ? new Date(alert.resolvedAt).toISOString() : 'N/A'
   ]);
 
   const csv = [
@@ -65,7 +65,7 @@ export const exportAlertsToJSON = (
     status: alert.status,
     severity: alert.severity || 'medium',
     created_at: new Date(alert.timestamp).toISOString(),
-    resolved_at: alert.resolved_at ? new Date(alert.resolved_at).toISOString() : null
+    resolved_at: alert.resolvedAt ? new Date(alert.resolvedAt).toISOString() : null
   }));
 
   const json = JSON.stringify({

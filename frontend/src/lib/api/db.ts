@@ -35,6 +35,7 @@ const DEFAULT_ALERTS: Alert[] = [
     threshold: 38,
     operator: '>',
     severity: 'HIGH',
+    status: 'active',
     timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hrs ago
   },
   {
@@ -46,6 +47,7 @@ const DEFAULT_ALERTS: Alert[] = [
     threshold: 30,
     operator: '>',
     severity: 'MEDIUM',
+    status: 'active',
     timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5 hrs ago
   },
   {
@@ -57,6 +59,7 @@ const DEFAULT_ALERTS: Alert[] = [
     threshold: 25,
     operator: '>',
     severity: 'LOW',
+    status: 'resolved',
     timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hrs ago
   },
   {
@@ -68,6 +71,7 @@ const DEFAULT_ALERTS: Alert[] = [
     threshold: 20,
     operator: '>',
     severity: 'MEDIUM',
+    status: 'active',
     timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
   },
   {
@@ -79,6 +83,7 @@ const DEFAULT_ALERTS: Alert[] = [
     threshold: 0,
     operator: '<',
     severity: 'HIGH',
+    status: 'resolved',
     timestamp: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(), // 1.5 days ago
   },
 ];

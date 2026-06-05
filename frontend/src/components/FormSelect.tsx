@@ -67,10 +67,10 @@ export default function FormSelect({
             disabled:opacity-50 disabled:cursor-not-allowed
             ${
               error
-                ? 'border-red-300 dark:border-red-800 focus:ring-red-500/20 bg-red-50 dark:bg-red-950/10'
+                ? 'border-red-800 focus:ring-red-500/20 bg-red-950/20'
                 : success
-                  ? 'border-emerald-300 dark:border-emerald-800 focus:ring-emerald-500/20 bg-emerald-50 dark:bg-emerald-950/10'
-                  : 'border-slate-200 dark:border-slate-700 focus:ring-indigo-500/20 bg-white dark:bg-slate-800'
+                  ? 'border-emerald-800 focus:ring-emerald-500/20 bg-emerald-950/20'
+                  : 'border-slate-700 focus:ring-indigo-500/20 bg-slate-800 hover:bg-slate-700'
             }
           `}
         >
