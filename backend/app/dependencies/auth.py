@@ -3,7 +3,7 @@
 import logging
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Header, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_db_session
@@ -14,14 +14,14 @@ logger = logging.getLogger(__name__)
 
 
 async def get_current_user(
-    token: str | None = None,
+    authorization: str | None = Header(None),
     db: AsyncSession = Depends(get_db_session),
 ) -> User:
     """
     FastAPI dependency to extract and validate current user from token.
 
     Args:
-        token: Bearer token from Authorization header.
+        authorization: Bearer token from Authorization header.
         db: Database session.
 
     Returns:
@@ -30,15 +30,18 @@ async def get_current_user(
     Raises:
         HTTPException: If authentication fails.
     """
-    if not token:
+    if not authorization:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing authentication token",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # Remove "Bearer " prefix if present
+    # Extract token from "Bearer <token>" format
+    token = authorization
     if token.startswith("Bearer "):
+        token = token[7:]
+    elif token.startswith("bearer "):
         token = token[7:]
 
     service = AuthService(db)
