@@ -17,6 +17,10 @@ from app.schemas.rule import (
     RuleUpdate,
     RuleResponse,
 )
+from app.schemas.alert import (
+    AlertCreate,
+    AlertResponse,
+)
 
 __all__ = [
     "RegisterRequest",
@@ -30,4 +34,6 @@ __all__ = [
     "RuleCreate",
     "RuleUpdate",
     "RuleResponse",
+    "AlertCreate",
+    "AlertResponse",
 ]

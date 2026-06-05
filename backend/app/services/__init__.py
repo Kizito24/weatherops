@@ -13,6 +13,9 @@ from app.services.rule_service import (
     RuleValidationError,
 )
 from app.services.weather_service import WeatherService, WeatherServiceError
+from app.services.rule_engine import RuleEngine, RuleEvaluationResult
+from app.services.alert_service import AlertService
+from app.services.notification_service import NotificationService
 
 __all__ = [
     "AuthService",
@@ -26,4 +29,8 @@ __all__ = [
     "RuleValidationError",
     "WeatherService",
     "WeatherServiceError",
+    "RuleEngine",
+    "RuleEvaluationResult",
+    "AlertService",
+    "NotificationService",
 ]

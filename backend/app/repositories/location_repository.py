@@ -77,3 +77,9 @@ class LocationRepository:
         await self.db.commit()
         logger.info(f"Location deleted: {location_id}")
         return True
+
+    async def get_all(self) -> list[Location]:
+        """Get all locations."""
+        query = select(Location).order_by(Location.created_at.desc())
+        result = await self.db.execute(query)
+        return result.scalars().all()
