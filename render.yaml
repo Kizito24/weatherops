@@ -100,6 +100,9 @@ services:
     name: weatherops-redis
     plan: standard
     region: oregon
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: Allow access
 
 databases:
   - name: weatherops-db
