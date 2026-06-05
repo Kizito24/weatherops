@@ -7,6 +7,16 @@ from app.schemas.auth import (
     TokenResponse,
     UserResponse,
 )
+from app.schemas.location import (
+    LocationCreate,
+    LocationUpdate,
+    LocationResponse,
+)
+from app.schemas.rule import (
+    RuleCreate,
+    RuleUpdate,
+    RuleResponse,
+)
 
 __all__ = [
     "RegisterRequest",
@@ -14,4 +24,10 @@ __all__ = [
     "RefreshTokenRequest",
     "TokenResponse",
     "UserResponse",
+    "LocationCreate",
+    "LocationUpdate",
+    "LocationResponse",
+    "RuleCreate",
+    "RuleUpdate",
+    "RuleResponse",
 ]

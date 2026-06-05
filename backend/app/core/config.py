@@ -50,6 +50,10 @@ class Settings(BaseSettings):
     CELERY_TASK_TRACK_STARTED: bool = True
     CELERY_TASK_TIME_LIMIT: int = 30 * 60  # 30 minutes
 
+    # WeatherAI Integration
+    WEATHERAI_BASE_URL: str = "https://api.weatherai.com"
+    WEATHERAI_API_KEY: str = "your-weatherai-api-key"
+
     # Logging
     LOG_LEVEL: str = "INFO"
     LOG_FORMAT: str = "json"
