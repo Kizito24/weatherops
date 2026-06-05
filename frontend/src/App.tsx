@@ -264,8 +264,7 @@ export default function App() {
   // Weather Rules callbacks
   const handleCreateRule = async (locationId: string, metric: WeatherMetric, operator: RuleOperator, threshold: number) => {
     try {
-      const name = `${metric.toUpperCase()} ${operator} ${threshold}`;
-      const res = await rulesApi.create(locationId, name, metric, operator, threshold);
+      const res = await rulesApi.create(locationId, metric, operator, threshold);
       const loc = locations.find((l) => l.id === locationId);
       showToast('Alert Rule Armed', `Incident trigger defined for "${loc?.name || ''}": ${metric} ${operator} ${threshold}`, 'LOW');
       await loadPlatformData();
@@ -281,7 +280,7 @@ export default function App() {
       const targetRule = rules.find((r) => r.id === id);
       if (!targetRule) throw new Error('Rule not found');
 
-      const res = await rulesApi.toggleActive(targetRule.locationId, id, !active);
+      const res = await rulesApi.toggleActive(id, !active);
       const loc = locations.find((l) => l.id === targetRule.locationId);
       showToast(
         res.isActive ? 'Incident Trigger Armed' : 'Incident Trigger Paused',
@@ -298,10 +297,7 @@ export default function App() {
 
   const handleDeleteRule = async (id: string) => {
     try {
-      const targetRule = rules.find((r) => r.id === id);
-      if (!targetRule) throw new Error('Rule not found');
-
-      await rulesApi.delete(targetRule.locationId, id);
+      await rulesApi.delete(id);
       showToast('Weather Rule Deleted', 'The selected weather automation constraint was completely uninstalled.', 'INFO');
       await loadPlatformData();
     } catch (e: any) {
