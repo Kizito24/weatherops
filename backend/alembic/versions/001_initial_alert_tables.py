@@ -1,7 +1,7 @@
 """Initial migration - create alerts table with full schema.
 
 Revision ID: 001_initial_alerts
-Revises:
+Revises: 000_base_tables
 Create Date: 2026-06-05 00:00:00.000000
 
 """
@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = "001_initial_alerts"
-down_revision = None
+down_revision = "000_base_tables"
 branch_labels = None
 depends_on = None
 

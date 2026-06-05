@@ -30,36 +30,39 @@ help:
 # Backend targets
 backend-start:
 	@echo "Starting backend services (FastAPI, PostgreSQL, Redis, Celery)..."
-	cd backend && docker-compose up -d
-	@echo "✓ Backend services started!"
+	cd backend && docker compose up -d
+	@echo "[OK] Backend services started!"
 	@echo "  FastAPI API: http://localhost:8001"
 	@echo "  PostgreSQL: localhost:5433"
 	@echo "  Redis: localhost:6379"
 
 backend-stop:
 	@echo "Stopping backend services..."
-	cd backend && docker-compose down
-	@echo "✓ Backend services stopped!"
+	cd backend && docker compose down
+	@echo "[OK] Backend services stopped!"
 
 backend-logs:
 	@echo "Showing backend logs (Ctrl+C to exit)..."
-	cd backend && docker-compose logs -f
+	cd backend && docker compose logs -f
 
 backend-build:
 	@echo "Building backend..."
-	cd backend && bash build.sh
-	@echo "✓ Backend build completed!"
+	@echo "Installing dependencies and running migrations in container..."
+	cd backend && docker compose exec backend pip install --upgrade pip setuptools wheel
+	cd backend && docker compose exec backend pip install -r requirements/base.txt
+	cd backend && docker compose exec backend alembic upgrade head
+	@echo "[OK] Backend build completed!"
 
 # Frontend targets
 frontend-start:
 	@echo "Starting frontend dev server..."
 	cd frontend && npm install && npm run dev
-	@echo "✓ Frontend started on http://localhost:3000"
+	@echo "[OK] Frontend started on http://localhost:3000"
 
 frontend-stop:
 	@echo "Stopping frontend..."
 	pkill -f "vite" || true
-	@echo "✓ Frontend stopped!"
+	@echo "[OK] Frontend stopped!"
 
 frontend-logs:
 	@echo "Frontend logs (if running in background)"
@@ -68,49 +71,49 @@ frontend-logs:
 frontend-build:
 	@echo "Building frontend for production..."
 	cd frontend && npm install && npm run build
-	@echo "✓ Frontend build completed!"
+	@echo "[OK] Frontend build completed!"
 
 # Database targets
 db-reset:
 	@echo "WARNING: This will delete all database data!"
-	@read -p "Are you sure? [y/N] " -n 1 -r; \
-	echo; \
-	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+	@printf "Are you sure? [y/N] "; \
+	read response; \
+	if [ "$$response" = "y" ] || [ "$$response" = "Y" ]; then \
 		echo "Resetting database..."; \
-		cd backend && docker-compose down -v; \
-		docker volume rm weatherops-postgres-data 2>/dev/null || true; \
-		docker volume rm weatherops-redis-data 2>/dev/null || true; \
+		cd backend && docker compose down -v; \
+		docker volume rm weatherops_postgres_data 2>/dev/null || true; \
+		docker volume rm weatherops_redis_data 2>/dev/null || true; \
 		echo "Starting fresh database..."; \
-		docker-compose up -d postgres redis; \
+		cd backend && docker compose up -d postgres redis; \
 		sleep 5; \
 		echo "Running migrations..."; \
-		docker-compose exec -T backend alembic upgrade head; \
-		echo "✓ Database reset completed!"; \
+		cd backend && docker compose exec -T backend alembic upgrade head; \
+		echo "[OK] Database reset completed!"; \
 	else \
 		echo "Database reset cancelled"; \
 	fi
 
 db-migrate:
 	@echo "Running database migrations..."
-	cd backend && docker-compose exec backend alembic upgrade head
-	@echo "✓ Migrations completed!"
+	cd backend && docker compose exec backend alembic upgrade head
+	@echo "[OK] Migrations completed!"
 
 # Utility targets
 start-all: backend-start frontend-start
-	@echo "✓ All services started!"
+	@echo "[OK] All services started!"
 
 stop-all: backend-stop frontend-stop
-	@echo "✓ All services stopped!"
+	@echo "[OK] All services stopped!"
 
 status:
 	@echo "Backend container status:"
-	@cd backend && docker-compose ps
+	@cd backend && docker compose ps
 	@echo ""
 	@echo "Frontend status:"
-	@pgrep -f "vite" > /dev/null && echo "✓ Frontend dev server is running" || echo "✗ Frontend dev server is not running"
+	@pgrep -f "vite" > /dev/null && echo "[RUNNING] Frontend dev server is running" || echo "[STOPPED] Frontend dev server is not running"
 
 clean:
 	@echo "Cleaning up..."
-	cd backend && docker-compose down
+	cd backend && docker compose down
 	cd frontend && rm -rf dist node_modules
-	@echo "✓ Cleanup completed!"
+	@echo "[OK] Cleanup completed!"

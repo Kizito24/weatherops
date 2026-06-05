@@ -48,7 +48,7 @@ def run_migrations_online() -> None:
     if 'sqlite+aiosqlite' in sync_url:
         sync_url = sync_url.replace('sqlite+aiosqlite', 'sqlite')
     elif 'postgresql+asyncpg' in sync_url:
-        sync_url = sync_url.replace('postgresql+asyncpg', 'postgresql')
+        sync_url = sync_url.replace('postgresql+asyncpg', 'postgresql+psycopg')
 
     connectable = create_engine(sync_url, poolclass=pool.NullPool)
 
