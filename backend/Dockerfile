@@ -19,6 +19,15 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
 # Copy application code
 COPY . .
 
+# Create entrypoint script
+RUN echo '#!/bin/bash\n\
+set -e\n\
+echo "Running database migrations..."\n\
+alembic upgrade head\n\
+echo "Starting application..."\n\
+exec gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000\n\
+' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
@@ -29,4 +38,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 
 EXPOSE 8000
 
-CMD ["gunicorn", "app.main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
+CMD ["/app/entrypoint.sh"]

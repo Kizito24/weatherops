@@ -2,7 +2,7 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "dockerfile",
-    "buildCommand": "bash backend/build.sh"
+    "dockerfilePath": "backend/Dockerfile"
   },
   "deploy": {
     "startCommand": "cd backend && gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT",
