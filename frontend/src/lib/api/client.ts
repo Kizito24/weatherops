@@ -48,8 +48,8 @@ apiClient.interceptors.response.use(
         );
 
         if (response.status === 200) {
-          const { access_token } = response.data;
-          tokenManager.setAccessToken(access_token);
+          const { access_token, refresh_token } = response.data;
+          tokenManager.setTokens(access_token, refresh_token);
 
           // Retry original request with new token
           originalRequest.headers.Authorization = `Bearer ${access_token}`;
