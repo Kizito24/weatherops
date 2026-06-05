@@ -11,7 +11,7 @@ services:
       POSTGRES_DB: weatherops
       POSTGRES_INITDB_ARGS: "-c shared_buffers=256MB -c max_connections=200"
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -43,7 +43,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: Dockerfile
     container_name: weatherops-backend
     environment:
       DATABASE_URL: postgresql+asyncpg://weatherops:password@postgres:5432/weatherops
@@ -54,7 +54,7 @@ services:
       DEBUG: "True"
       SECRET_KEY: dev-secret-key-change-in-production
     ports:
-      - "8000:8000"
+      - "8001:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -64,13 +64,12 @@ services:
       - .:/app
     networks:
       - weatherops
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   # Celery Worker
   celery_worker:
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: Dockerfile
     container_name: weatherops-celery-worker
     environment:
       DATABASE_URL: postgresql+asyncpg://weatherops:password@postgres:5432/weatherops

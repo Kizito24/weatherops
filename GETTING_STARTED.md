@@ -287,13 +287,13 @@ npm run lint
 cd ..
 
 # Start all services
-docker-compose up -d
+docker compose up -d
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
 # Check services
-docker-compose ps
+docker compose ps
 ```
 
 **Services Running**:
