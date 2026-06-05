@@ -75,10 +75,7 @@ services:
           type: redis
           property: connectionString
       - key: SECRET_KEY
-        fromService:
-          name: weatherops-backend
-          type: web
-          property: env.SECRET_KEY
+        generateValue: true
       - key: CELERY_BROKER_URL
         fromService:
           name: weatherops-redis
@@ -103,6 +100,9 @@ services:
     name: weatherops-redis
     plan: standard
     region: oregon
+    ipAllowList:
+      - cidrBlock: 10.0.0.0/8
+        description: Internal Render services
 
 databases:
   - name: weatherops-db
