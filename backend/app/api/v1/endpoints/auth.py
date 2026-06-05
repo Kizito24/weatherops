@@ -20,20 +20,20 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 async def register(
     request: RegisterRequest,
     db: AsyncSession = Depends(get_db_session),
-) -> UserResponse:
+) -> TokenResponse:
     """
-    Register a new user account.
+    Register a new user account and return authentication tokens.
 
     Args:
         request: Registration request with email and password.
         db: Database session.
 
     Returns:
-        Created user information.
+        Access and refresh tokens for the new user.
 
     Raises:
         HTTPException: If registration fails.
@@ -42,7 +42,14 @@ async def register(
 
     try:
         user = await service.register_user(request.email, request.password)
-        return UserResponse.model_validate(user)
+        access_token, refresh_token = await service.create_tokens(user.id)
+
+        return TokenResponse(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            token_type="bearer",
+            expires_in=service.settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        )
     except AuthenticationError as e:
         logger.warning(f"Registration failed: {e}")
         raise HTTPException(

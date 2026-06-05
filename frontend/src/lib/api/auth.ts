@@ -27,6 +27,11 @@ export const authApi = {
       email,
       password,
     });
+
+    // Store tokens
+    const { access_token, refresh_token } = response.data;
+    tokenManager.setTokens(access_token, refresh_token);
+
     return response.data;
   },
 

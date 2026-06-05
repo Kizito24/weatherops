@@ -2,10 +2,10 @@
 
 from passlib.context import CryptContext
 
-# Configure bcrypt password hashing
+# Configure argon2 password hashing (with bcrypt fallback for backwards compatibility)
 pwd_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated="auto",
+    schemes=["argon2", "bcrypt"],
+    deprecated="bcrypt",
 )
 
 
