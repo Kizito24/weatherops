@@ -54,6 +54,15 @@ class Settings(BaseSettings):
     WEATHERAI_BASE_URL: str = "https://api.weatherai.com"
     WEATHERAI_API_KEY: str = "your-weatherai-api-key"
 
+    # Email (SendGrid)
+    SENDGRID_API_KEY: str = ""
+    SENDGRID_FROM_EMAIL: str = "alerts@weatherops.com"
+
+    # SMS (Twilio)
+    TWILIO_ACCOUNT_SID: str = ""
+    TWILIO_AUTH_TOKEN: str = ""
+    TWILIO_PHONE_NUMBER: str = ""
+
     # Logging
     LOG_LEVEL: str = "INFO"
     LOG_FORMAT: str = "json"
