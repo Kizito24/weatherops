@@ -5,12 +5,14 @@ interface AlertResponse {
   id: string;
   location_id: string;
   rule_id: string;
+  user_id: string;
   metric: WeatherMetric;
   actual_value: number;
   threshold: number;
   operator: RuleOperator;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH';
   status: 'active' | 'resolved';
-  weather_snapshot: Record<string, unknown>;
+  weather_snapshot: string | null;
   created_at: string;
   updated_at: string;
   resolved_at: string | null;
@@ -27,44 +29,36 @@ const mapToAlert = (response: AlertResponse): Alert => ({
   value: response.actual_value,
   threshold: response.threshold,
   operator: response.operator,
-  severity: determineSeverity(response.metric, response.actual_value, response.threshold, response.operator),
+  severity: response.severity,
   timestamp: response.created_at,
 });
 
-/**
- * Determine severity based on metric and values
- */
-const determineSeverity = (metric: WeatherMetric, actual: number, threshold: number, operator: RuleOperator): 'LOW' | 'MEDIUM' | 'HIGH' => {
-  const margin = Math.abs(actual - threshold);
-
-  if (metric === 'temperature') {
-    if (margin > 8 || actual > 42 || actual < -5) return 'HIGH';
-    if (margin > 3) return 'MEDIUM';
-  } else if (metric === 'rainfall') {
-    if (margin > 15 || actual > 45) return 'HIGH';
-    if (margin > 5) return 'MEDIUM';
-  } else if (metric === 'wind_speed') {
-    if (margin > 12 || actual > 30) return 'HIGH';
-    if (margin > 4) return 'MEDIUM';
-  } else if (metric === 'humidity') {
-    if (margin > 20) return 'HIGH';
-    if (margin > 10) return 'MEDIUM';
-  }
-
-  return 'LOW';
-};
-
 export const alertsApi = {
   /**
-   * Get all active alerts (with optional filtering)
+   * Get all alerts with optional filtering and pagination
    */
-  list: async (filters?: { location_id?: string; status?: 'active' | 'resolved' }): Promise<Alert[]> => {
+  list: async (filters?: {
+    location_id?: string;
+    status?: 'active' | 'resolved';
+    severity?: 'LOW' | 'MEDIUM' | 'HIGH';
+    limit?: number;
+    offset?: number;
+  }): Promise<Alert[]> => {
     const params = new URLSearchParams();
     if (filters?.location_id) {
       params.append('location_id', filters.location_id);
     }
     if (filters?.status) {
       params.append('status', filters.status);
+    }
+    if (filters?.severity) {
+      params.append('severity', filters.severity);
+    }
+    if (filters?.limit) {
+      params.append('limit', filters.limit.toString());
+    }
+    if (filters?.offset !== undefined) {
+      params.append('offset', filters.offset.toString());
     }
 
     const response = await apiClient.get<AlertResponse[]>('/alerts', { params });
@@ -90,62 +84,38 @@ export const alertsApi = {
   /**
    * Get alerts for a specific location
    */
-  getLocationAlerts: async (locationId: string): Promise<Alert[]> => {
-    const response = await apiClient.get<AlertResponse[]>(`/locations/${locationId}/alerts`);
+  getLocationAlerts: async (locationId: string, severity?: 'LOW' | 'MEDIUM' | 'HIGH'): Promise<Alert[]> => {
+    const params = new URLSearchParams();
+    if (severity) {
+      params.append('severity', severity);
+    }
+    const response = await apiClient.get<AlertResponse[]>(`/alerts/location/${locationId}`, { params });
     return response.data.map(mapToAlert);
   },
 
   /**
-   * Get overview statistics
+   * Get critical alert count (HIGH severity)
    */
-  getOverviewStats: async (): Promise<{
-    totalLocations: number;
-    activeRules: number;
-    triggeredAlerts24h: number;
-    systemStatus: 'Degraded' | 'Healthy' | 'Critical' | 'Maintenance';
-    systemUptime: string;
-  }> => {
+  getCriticalCount: async (): Promise<number> => {
     try {
-      const alerts = await alertsApi.list({ status: 'active' });
-
-      // Count alerts in last 24 hours
-      const now = Date.now();
-      const triggerPeriod = 24 * 60 * 60 * 1000;
-      const alert24h = alerts.filter(a => {
-        const alertTime = new Date(a.timestamp).getTime();
-        return (now - alertTime) < triggerPeriod;
-      }).length;
-
-      // Determine system status based on high severity alerts
-      let status: 'Degraded' | 'Healthy' | 'Critical' | 'Maintenance' = 'Healthy';
-      const highAlertsCount = alerts.filter(a => {
-        const isHigh = a.severity === 'HIGH';
-        const isRecent = (now - new Date(a.timestamp).getTime()) < 6 * 60 * 60 * 1000;
-        return isHigh && isRecent;
-      }).length;
-
-      if (highAlertsCount > 2) {
-        status = 'Critical';
-      } else if (highAlertsCount > 0) {
-        status = 'Degraded';
-      }
-
-      return {
-        totalLocations: 0, // Would need separate API call
-        activeRules: 0, // Would need separate API call
-        triggeredAlerts24h: alert24h,
-        systemStatus: status,
-        systemUptime: '99.98%',
-      };
+      const response = await apiClient.get<{ critical_count: number }>('/alerts/count/critical');
+      return response.data.critical_count;
     } catch (error) {
-      // Return default stats on error
-      return {
-        totalLocations: 0,
-        activeRules: 0,
-        triggeredAlerts24h: 0,
-        systemStatus: 'Healthy',
-        systemUptime: '99.98%',
-      };
+      console.error('Failed to get critical alert count:', error);
+      return 0;
+    }
+  },
+
+  /**
+   * Get alert counts by severity
+   */
+  getCountsBySeverity: async (): Promise<{ low: number; medium: number; high: number }> => {
+    try {
+      const response = await apiClient.get<{ by_severity: { low: number; medium: number; high: number } }>('/alerts/count/by-severity');
+      return response.data.by_severity;
+    } catch (error) {
+      console.error('Failed to get severity counts:', error);
+      return { low: 0, medium: 0, high: 0 };
     }
   },
 };
