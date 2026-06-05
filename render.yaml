@@ -99,14 +99,13 @@ services:
     staticPublishPath: frontend/dist
     envVars: []
 
-databases:
-  - name: weatherops-db
-    databaseName: weatherops
+  - type: redis
+    name: weatherops-redis
     plan: standard
     region: oregon
 
-services:
-  - name: weatherops-redis
-    type: redis
+databases:
+  - name: weatherops-db
+    databaseName: weatherops
     plan: standard
     region: oregon
