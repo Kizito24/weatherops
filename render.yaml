@@ -101,8 +101,7 @@ services:
     plan: standard
     region: oregon
     ipAllowList:
-      - cidrBlock: 10.0.0.0/8
-        description: Internal Render services
+      - sourceIp: 10.0.0.0/8
 
 databases:
   - name: weatherops-db
