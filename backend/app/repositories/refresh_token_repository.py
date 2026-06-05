@@ -5,6 +5,7 @@ import logging
 from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 
 from app.models.refresh_token import RefreshToken
 
@@ -46,10 +47,16 @@ class RefreshTokenRepository:
             expires_at=expires_at,
         )
         self.db.add(token)
-        await self.db.commit()
-        await self.db.refresh(token)
-        logger.info(f"Refresh token created for user: {user_id}")
-        return token
+
+        try:
+            await self.db.commit()
+            await self.db.refresh(token)
+            logger.info(f"Refresh token created for user: {user_id}")
+            return token
+        except IntegrityError as e:
+            await self.db.rollback()
+            logger.error(f"IntegrityError creating refresh token: {e}")
+            raise
 
     async def get_refresh_token_by_hash(self, token_hash: str) -> RefreshToken | None:
         """

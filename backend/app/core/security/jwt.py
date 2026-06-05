@@ -1,6 +1,7 @@
 """JWT token encoding and decoding utilities."""
 
 import logging
+import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -67,6 +68,7 @@ def encode_token(
         "type": token_type,
         "exp": expire,
         "iat": datetime.now(timezone.utc),
+        "jti": str(uuid.uuid4()),  # Unique token ID to prevent collisions
     }
 
     encoded_jwt = jwt.encode(
