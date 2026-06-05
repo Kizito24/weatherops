@@ -4,6 +4,7 @@ import logging
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.session import get_db_session
@@ -47,7 +48,7 @@ async def get_alerts(
 
     try:
         # Start with all active alerts for the user's locations
-        query = db.select(Alert).where(Alert.user_id == current_user.id)
+        query = select(Alert).where(Alert.user_id == current_user.id)
 
         # Apply filters
         if location_id:
