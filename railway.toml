@@ -1,0 +1,25 @@
+[build]
+builder = "dockerfile"
+buildCommand = "bash backend/build.sh"
+
+[deploy]
+startCommand = "cd backend && gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT"
+restartPolicyType = "always"
+restartPolicyMaxRetries = 5
+
+[env]
+ENVIRONMENT = "production"
+DEBUG = "false"
+PYTHON_VERSION = "3.12"
+LOG_LEVEL = "INFO"
+LOG_FORMAT = "json"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = "30"
+CELERY_ACCEPT_CONTENT = '["json"]'
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "UTC"
+DATABASE_ECHO = "false"
+DATABASE_POOL_SIZE = "10"
+DATABASE_MAX_OVERFLOW = "5"
+DATABASE_POOL_PRE_PING = "true"

@@ -25,6 +25,7 @@ import LocationsPage from './components/LocationsPage';
 import RulesPage from './components/RulesPage';
 import AlertsPage from './components/AlertsPage';
 import SettingsPage from './components/SettingsPage';
+import ExportModal from './components/ExportModal';
 
 interface Toast {
   id: string;
@@ -50,6 +51,7 @@ export default function App() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isSimulatingTrigger, setIsSimulatingTrigger] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   // Toast alert states
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -383,6 +385,7 @@ export default function App() {
               setDarkMode={setDarkMode}
               onSimulateIncident={handleSimulateIncident}
               isSimulating={isSimulatingTrigger}
+              onExport={() => setIsExportModalOpen(true)}
             />
 
             {/* View Shell pages selection */}
@@ -440,6 +443,17 @@ export default function App() {
             </main>
           </div>
         </div>
+      )}
+
+      {/* --- DATA EXPORT MODAL --- */}
+      {user && (
+        <ExportModal
+          isOpen={isExportModalOpen}
+          onClose={() => setIsExportModalOpen(false)}
+          alerts={alerts}
+          rules={rules}
+          locations={new Map(locations.map(l => [l.id, l.name]))}
+        />
       )}
 
       {/* --- LIVE INTERACTIVE TOAST SYSTEM EXPRESSION --- */}

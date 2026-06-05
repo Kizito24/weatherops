@@ -1,0 +1,6 @@
+{
+  "name": "WeatherOps",
+  "description": "Event-Driven Weather Intelligence Platform for location monitoring, risk mitigation, and alert automation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
