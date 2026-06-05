@@ -1,5 +1,6 @@
 """ORM Models package."""
 
-from app.database.base import Base
+from app.models.user import User
+from app.models.refresh_token import RefreshToken
 
-__all__ = ["Base"]
+__all__ = ["User", "RefreshToken"]
