@@ -20,13 +20,13 @@ router = APIRouter(prefix="/alerts", tags=["alerts"])
 
 @router.get("", response_model=list[AlertResponse])
 async def get_alerts(
+    current_user: CurrentUser,
+    db: AsyncSession = Depends(get_db_session),
     location_id: UUID | None = Query(None, description="Filter by location"),
     severity: str | None = Query(None, description="Filter by severity (LOW/MEDIUM/HIGH)"),
     status: str | None = Query(None, description="Filter by status (active/resolved)"),
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
-    current_user: CurrentUser = Depends(),
-    db: AsyncSession = Depends(get_db_session),
 ) -> list[AlertResponse]:
     """
     Get alerts with optional filtering.
@@ -77,10 +77,10 @@ async def get_alerts(
 @router.get("/location/{location_id}", response_model=list[AlertResponse])
 async def get_location_alerts(
     location_id: UUID,
+    current_user: CurrentUser,
+    db: AsyncSession = Depends(get_db_session),
     severity: str | None = Query(None, description="Filter by severity"),
     limit: int = Query(50, ge=1, le=1000),
-    current_user: CurrentUser = Depends(),
-    db: AsyncSession = Depends(get_db_session),
 ) -> list[AlertResponse]:
     """
     Get active alerts for a specific location.
@@ -124,7 +124,7 @@ async def get_location_alerts(
 @router.get("/{alert_id}", response_model=AlertResponse)
 async def get_alert(
     alert_id: UUID,
-    current_user: CurrentUser = Depends(),
+    current_user: CurrentUser,
     db: AsyncSession = Depends(get_db_session),
 ) -> AlertResponse:
     """
@@ -169,7 +169,7 @@ async def get_alert(
 @router.post("/{alert_id}/resolve", response_model=AlertResponse)
 async def resolve_alert(
     alert_id: UUID,
-    current_user: CurrentUser = Depends(),
+    current_user: CurrentUser,
     db: AsyncSession = Depends(get_db_session),
 ) -> AlertResponse:
     """
@@ -230,7 +230,7 @@ async def resolve_alert(
 
 @router.get("/count/critical", response_model=dict)
 async def get_critical_alert_count(
-    current_user: CurrentUser = Depends(),
+    current_user: CurrentUser,
     db: AsyncSession = Depends(get_db_session),
 ) -> dict:
     """
@@ -262,7 +262,7 @@ async def get_critical_alert_count(
 
 @router.get("/count/by-severity", response_model=dict)
 async def get_alert_counts_by_severity(
-    current_user: CurrentUser = Depends(),
+    current_user: CurrentUser,
     db: AsyncSession = Depends(get_db_session),
 ) -> dict:
     """

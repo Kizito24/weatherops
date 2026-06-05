@@ -2,12 +2,12 @@
 
 from app.core.config import Settings, get_settings
 from app.core.logging import setup_logging
-from app.core.security import create_access_token, verify_token
+from app.core.security import encode_token, decode_token
 
 __all__ = [
     "Settings",
     "get_settings",
     "setup_logging",
-    "create_access_token",
-    "verify_token",
+    "encode_token",
+    "decode_token",
 ]

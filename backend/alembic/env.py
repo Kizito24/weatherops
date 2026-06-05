@@ -1,10 +1,14 @@
 """Alembic environment configuration."""
 
+import sys
+from pathlib import Path
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 config = context.config
 
@@ -37,11 +41,16 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    from sqlalchemy import create_engine
+
+    # Convert async URLs to sync for migrations
+    sync_url = settings.DATABASE_URL
+    if 'sqlite+aiosqlite' in sync_url:
+        sync_url = sync_url.replace('sqlite+aiosqlite', 'sqlite')
+    elif 'postgresql+asyncpg' in sync_url:
+        sync_url = sync_url.replace('postgresql+asyncpg', 'postgresql')
+
+    connectable = create_engine(sync_url, poolclass=pool.NullPool)
 
     with connectable.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)

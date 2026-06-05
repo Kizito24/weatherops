@@ -17,7 +17,7 @@ router = APIRouter(prefix="/preferences", tags=["preferences"])
 
 @router.get("", response_model=UserPreferenceResponse)
 async def get_preferences(
-    current_user: CurrentUser = Depends(),
+    current_user: CurrentUser,
     db: AsyncSession = Depends(get_db_session),
 ) -> UserPreferenceResponse:
     """
@@ -56,7 +56,7 @@ async def get_preferences(
 @router.put("", response_model=UserPreferenceResponse)
 async def update_preferences(
     request: UserPreferenceUpdate,
-    current_user: CurrentUser = Depends(),
+    current_user: CurrentUser,
     db: AsyncSession = Depends(get_db_session),
 ) -> UserPreferenceResponse:
     """
@@ -112,7 +112,7 @@ async def update_preferences(
 
 @router.post("/test/email")
 async def test_email_notification(
-    current_user: CurrentUser = Depends(),
+    current_user: CurrentUser,
     db: AsyncSession = Depends(get_db_session),
 ) -> dict:
     """
@@ -161,7 +161,7 @@ async def test_email_notification(
 
 @router.post("/test/sms")
 async def test_sms_notification(
-    current_user: CurrentUser = Depends(),
+    current_user: CurrentUser,
     db: AsyncSession = Depends(get_db_session),
 ) -> dict:
     """
@@ -210,7 +210,7 @@ async def test_sms_notification(
 
 @router.post("/test/webhook")
 async def test_webhook_notification(
-    current_user: CurrentUser = Depends(),
+    current_user: CurrentUser,
     db: AsyncSession = Depends(get_db_session),
 ) -> dict:
     """
